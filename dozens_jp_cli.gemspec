@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["takuya.1st+nospam@gmail.com"]
   spec.summary       = %q{dozens.jp client. }
   spec.description   = %q{dozens.jp client. for update  A recored }
-  spec.homepage      = ""
+  spec.homepage      = "https://github.com/takuya/dozens_jp_cli"
   spec.license       = "GNUv3"
 
   spec.files         = `git ls-files -z`.split("\x0")
