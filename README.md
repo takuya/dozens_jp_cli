@@ -12,7 +12,7 @@ gem 'dozens_jp_cli'
 
 And then execute:
 
-    $ bundle
+    $ bundle install
 
 Or install it yourself as:
 
@@ -20,7 +20,30 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+
+```ruby 
+require 'dozens_jp_cli'
+
+
+dozens_user_id = "youname"
+dozens_user_token = "xxxxxxxxxxxxxxxxxx"
+
+d = Dozens.new(dozens_user_id,dozens_user_token)
+
+## create new zone
+ret = d.zone_create_new("dns.example.com", "webmaster@dns.example.com")
+## delete a zone 
+ret = d.zone_delete("dns.example.com")
+## add a record into zone
+ret = d.record_create("www.dns.example.com","dns.example.com")
+## or 
+ret = d.record_create("www","dns.example.com")
+## delete a record 
+ret = d.record_delete("www.dns.example.com")
+
+```
+
+
 
 ## Contributing
 
