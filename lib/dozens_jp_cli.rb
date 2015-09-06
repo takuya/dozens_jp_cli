@@ -3,7 +3,7 @@ require 'resolv'
 
 require "dozens_jp_cli/version"
 
-## TODO: DozensJP DNS round robin is supported, but this script  dose not support dns round robin 
+## TODO: DozensJP supports DNS round robin, but this script  dose not support dns round robin 
 class Dozens
     attr_accessor :ua
     API_BASE_URI = "http://dozens.jp/api"
