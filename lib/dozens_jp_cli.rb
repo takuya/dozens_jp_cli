@@ -1,8 +1,9 @@
 require 'mechanize'
+require 'resolv'
 
 require "dozens_jp_cli/version"
 
-
+## TODO: DozensJP DNS round robin is supported, but this script  dose not support dns round robin 
 class Dozens
     attr_accessor :ua
     API_BASE_URI = "http://dozens.jp/api"
@@ -85,8 +86,18 @@ class Dozens
     def zone_exists?(name)
         self.find_zone_id(name)!=nil
     end
+    def record_name(id)
+        ## TODO dns round robin
+        zone = self.zone_list.each{|zone| 
+          record = self.record_list(zone["name"]).each{|record|
+            return record["name"] if record['id'] == id 
+          }
+        }
+        return nil
+    end
 
     def find_record_id(name)
+        ## TODO dns round robin
         zone = self.zone_list.find{|e| 
             name =~/#{e["name"]}/
         }
@@ -127,14 +138,26 @@ class Dozens
 
             
     end
-    def record_update(record_id,prio=10,content=nil,ttl=7200)
+    def record_update(record_id_or_name,prio=10,content=nil,ttl=7200,force=false)
+        ## TODO dns round robin
+        record_id = ( record_id_or_name =~ /\d+/ ) ? record_id_or_name : self.find_record_id(record_id_or_name)
         content = self.current_global_ip unless content 
         params = {"prio"=>prio,"content"=>content,"ttl"=>ttl}.to_json
         url = API_BASE_URI+"/record/update/#{record_id}.json"
         ret = self.post(url,nil,params)
         JSON.parse(ret)["record"]
     end
-
+    def address_is_changed?(record_id_or_name,content=nil)
+        ## TODO dns round robin
+        record_name = ( record_id_or_name =~ /\d+/ ) ? self.record_name(record_id_or_name): record_id_or_name
+        current_dns_result = Resolv.getaddresses(record_name)
+        if current_dns_result 
+          current_dns_result = current_dns_result.first
+        end
+        replace_content   = (content) ? content : self.current_global_ip
+        return current_dns_result != replace_content
+    end
+    alias :address_is_changed :address_is_changed?
     def current_global_ip
         url = "http://myexternalip.com/json"
         ret = self.get(url,{},[])
